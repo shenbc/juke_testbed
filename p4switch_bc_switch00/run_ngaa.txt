@@ -5,15 +5,17 @@ cd bf-sde-9.3.1/
 . ./set_sde.bash
 
 编译
-./p4_build-9.0.0.sh -p bc/ngaa/ngaa.p4
+./p4_build-9.0.0.sh -p bc/juke_testbed/p4switch_bc_switch00/ngaa/ngaa.p4
 
 运行
 ./run_switchd.sh -p ngaa
-./run_bfshell.sh -f bc/ngaa/port.bfsh
-./run_bfshell.sh -b bc/ngaa/setup.py
+./run_bfshell.sh -f bc/juke_testbed/p4switch_bc_switch00/ngaa/port.bfsh
+./run_bfshell.sh -b bc/juke_testbed/p4switch_bc_switch00/ngaa/setup_sw0.py
+OR
+./run_bfshell.sh -b bc/juke_testbed/p4switch_bc_switch00/ngaa/setup_sw1.py
 
 查看setup
-vim bc/ngaa/setup.py
+vim bc/juke_testbed/p4switch_bc_switch00/ngaa/setup_sw1.py
 
 =============
 查pid
