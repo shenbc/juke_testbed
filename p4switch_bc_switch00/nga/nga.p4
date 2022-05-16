@@ -170,16 +170,17 @@ control Ingress(
                 }
             }
             else{
-                drop();
+                ipRoute.apply();
+                // drop();
             }
         } 
         else {     
             if (hdr.ipv4.isValid()) {
                 ipv4_lpm.apply();
+            }else{
+                drop;
             }
         }
-
-        
     }
 }
 

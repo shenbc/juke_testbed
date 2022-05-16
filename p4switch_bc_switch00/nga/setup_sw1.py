@@ -2,17 +2,31 @@ from ipaddress import ip_address
 
 p4 = bfrt.nga.pipe
 
-ip01="172.16.170.1"
-ip02="172.16.170.2"
-ip03="172.16.170.3"
+# server ip, use Ethernet mode, not ib mode
+# network card name “ens3f0”
+ip01="172.16.200.1"
+ip02="172.16.200.2"
+ip08="172.16.200.8"
+ip11="172.16.200.31"
+ip12="172.16.200.32"
+ip14="172.16.200.34"
+ip15="172.16.200.35"
 
-mac01=0x48df37aafaa8
-mac02=0x48df375cffb8
-mac03=0x48df37aaacb8
+mac01=0x08c0eb204fda
+mac02=0x08c0eb289c60
+mac08=0x08c0eb289ca8
+mac11=0x08c0eb289d60
+mac12=0x08c0eb289c58
+mac14=0x88e9a40d7f54
+mac15=0x9440c9b4d8d0
 
+# can be found in “bf-sde.pm> show”, list "D_P"
 port01=132
-port02=133
-port03=134
+port02=140
+port03=148
+port04=156
+port05=164
+port29=144
 
 def ip2int(ip):
     ip_list = ip.strip().split('.')
@@ -43,9 +57,11 @@ def clear_all(verbose=True, batching=True):
                 if batching:
                     bfrt.batch_end()
         except Exception as e:
+            """
             if e.sts == 6:
                 if verbose:
                     print('(Empty) ', end='')
+            """
         finally:
             if verbose:
                 print('Done')
@@ -76,20 +92,33 @@ def clear_all(verbose=True, batching=True):
     for table in p4.info(return_info=True, print_info=False):
         if table['type'] in ['ACTION_PROFILE']:
             _clear(table, verbose=verbose, batching=batching)
-    
+
+print("entering clear all function")
 clear_all()
+print("exit clear all function")
 
 switch_check = p4.Ingress.switch_check
 ipv4_lpm = p4.Ingress.ipv4_lpm
 
-switch_check.add_with_set_agg(b'00000000')
-print("done")
-ipv4_lpm.add_with_ipv4_forward(dstAddr=ip_address(ip01),dstMacAddr=mac01,port=port01)  # dstip, dstmac, port
-print("done")
-ipv4_lpm.add_with_ipv4_forward(dstAddr=ip_address(ip02),dstMacAddr=mac02,port=port02)
-print("done")
-ipv4_lpm.add_with_ipv4_forward(dstAddr=ip_address(ip03),dstMacAddr=mac03,port=port03)
-print("done")
+# =============================================================
+# parmeters in add_with functions below are:
+# ngaa.p4 -> key in table (hdr.ipv4.dst_addr, "dst_addr" is what we need)
+# ngaa.p4 -> action function's parameters in table (action ipv4_forward has two ,dst_addr and port)
+
+# Attention: parameters can not be same, so we can use only one OR change the conflic name
+# for example, we can change "action ipv4_forward(mac_addr_t dst_addr" to "action ipv4_forward(mac_addr_t dst_addr_m"
+# to aviod the conflic to key "dst_addr"
+
+# what does "add_with_ipv4_forward" do?
+# extract the packet and match ip with ip01/ip02/..., if successfully matched, send packet to port0x
+switch_check.add_with_set_agg(b'00000001')
+print("done set agg")
+ipv4_lpm.add_with_ipv4_forward(dstAddr=ip_address(ip08),dstMacAddr=mac08,port=port29)
+print("done ip08")
+ipv4_lpm.add_with_ipv4_forward(dstAddr=ip_address(ip11),dstMacAddr=mac11,port=port05)
+print("done ip11")
+
+# =============================================================
 
 # register_table_size = p4.Ingress.table_size_reg
 # register_counter = p4.Ingress.test_reg
@@ -108,6 +137,6 @@ def clear_counters(table_node):
 
 # dump everything
 switch_check.dump(table=True)
-ipv4_lpm.dump(table=True)
+ipRoute.dump(table=True)
 # register_table_size.dump(table=True,from_hw=1)
 # register_counter.dump(table=True,from_hw=1)
