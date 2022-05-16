@@ -135,7 +135,7 @@ def main():
         
         start_time3 = time.time()
         data_manager.update_data(local_para.detach().tolist())
-        data_manager.fast_send_data(int(args.idx), 0, 5, 100000) # worker id, switch id, degree, no use
+        data_manager.fast_send_data(int(args.idx), 0, 2, 100000) # worker id, switch id, degree, no use
         fast_send_time = time.time() - start_time3
         flog.write('fast_send_time: ' + str(fast_send_time) + '\n')
 
