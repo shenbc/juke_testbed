@@ -110,6 +110,8 @@ class Worker:
                   ' --algorithm ' + self.common_config.algorithm + \
                   ' --step_size ' + str(self.common_config.step_size) + \
                   ' --write_to_file ' + str(self.common_config.write_to_file) + \
+                  ' --agg_sw_idx ' + str(self.agg_sw_idx) + \
+                  ' --degree ' + str(self.degree) + \
                   ' > data/log/client_' + str(self.idx) + '_log.txt 2>&1'
             print("Execute cmd.")
             print(cmd)
