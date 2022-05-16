@@ -88,6 +88,7 @@ struct metadata_t {
     bit<1> is_aggregation;  //initial to 0 at parser
     bit<1> collision;       //initial to 0 at parser
     bit<1> is_ack;
+    bit<8> count;           //initial to 0 at parser
     bit<8> aggDegree;
     index_t index;          //initial to 0 at parser
     b32_t frag_id;

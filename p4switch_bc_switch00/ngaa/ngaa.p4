@@ -179,7 +179,7 @@ control Ingress(
                     value30.apply(hdr.gradient.value30,hdr.gradient.value30,ig_md);
                     value31.apply(hdr.gradient.value31,hdr.gradient.value31,ig_md);
 
-                    if (ig_md.count == 0){ // Aggregation done.
+                    if (ig_md.count == hdr.ngaa.count){ // Aggregation done.
                         ipRoute.apply();
                     }
                     else{
