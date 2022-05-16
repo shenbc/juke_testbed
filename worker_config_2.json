@@ -2,10 +2,10 @@
   "worker_config_list": [
     {
       "name": "host0",
-      "host": "server02",
-      "ip": "172.16.50.2",
-      "nic_ip": "172.16.200.2",
-      "ssh_port": "6002",
+      "host": "server01",
+      "ip": "172.16.50.1",
+      "nic_ip": "172.16.200.1",
+      "ssh_port": "6001",
       "user": "sdn",
       "pwd": "sdn123456",
       "computation": 3,
