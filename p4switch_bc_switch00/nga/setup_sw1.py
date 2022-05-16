@@ -137,6 +137,6 @@ def clear_counters(table_node):
 
 # dump everything
 switch_check.dump(table=True)
-ipRoute.dump(table=True)
+ipv4_lpm.dump(table=True)
 # register_table_size.dump(table=True,from_hw=1)
 # register_counter.dump(table=True,from_hw=1)
