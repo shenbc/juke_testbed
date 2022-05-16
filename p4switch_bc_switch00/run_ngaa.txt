@@ -1,0 +1,36 @@
+ssh root@172.16.50.241
+onl
+
+cd bf-sde-9.3.1/
+. ./set_sde.bash
+
+编译
+./p4_build-9.0.0.sh -p bc/ngaa/ngaa.p4
+
+运行
+./run_switchd.sh -p ngaa
+./run_bfshell.sh -f bc/ngaa/port.bfsh
+./run_bfshell.sh -b bc/ngaa/setup.py
+
+查看setup
+vim bc/ngaa/setup.py
+
+=============
+查pid
+ps -ax | grep switch
+sudo kill xxx
+
+开端口
+port-add 1/- 10G NONE
+an-set 1/- 2
+port-enb 1/-
+port-add 2/- 10G NONE
+an-set 2/- 2
+port-enb 2/-
+port-add 30/- 10G NONE
+an-set 30/- 2
+port-enb 30/-
+port-add 31/- 10G NONE
+an-set 31/- 2
+port-enb 31/-
+show
