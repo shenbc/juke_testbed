@@ -46,6 +46,8 @@ parser.add_argument('--adaptive', action="store_false", default=False)
 parser.add_argument('--visible_cuda', type=str, default='-1')
 parser.add_argument('--algorithm', type=str, default='proposed')
 parser.add_argument('--write_to_file', default=False)
+parser.add_argument('--agg_sw_idx', type=int, default=0)
+parser.add_argument('--degree', type=int, default=5)
 
 args = parser.parse_args()
 
@@ -135,7 +137,7 @@ def main():
         
         start_time3 = time.time()
         data_manager.update_data(local_para.detach().tolist())
-        data_manager.fast_send_data(int(args.idx), 0, 2, 100000) # worker id, switch id, degree, no use
+        data_manager.fast_send_data(int(args.idx), args.agg_sw_idx, args.degree, 100000) # worker id, switch id, degree, no use
         fast_send_time = time.time() - start_time3
         flog.write('fast_send_time: ' + str(fast_send_time) + '\n')
 

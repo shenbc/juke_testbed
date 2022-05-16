@@ -34,9 +34,11 @@ parser.add_argument('--epoch', type=int, default=10)
 parser.add_argument('--action_num', type=int, default=9)
 parser.add_argument('--worker_num', type=int, default=8)
 parser.add_argument('--use_cuda', action="store_false", default=True)
-parser.add_argument('--ip', type=str, default='172.16.50.8')               # master(执行server.py的ip)
-parser.add_argument('--nic_ip', type=str, default='172.16.200.8')          # master(执行server.py的nic_ip)
+parser.add_argument('--ip', type=str, default='172.16.50.34')               # master(执行server.py的ip)
+parser.add_argument('--nic_ip', type=str, default='172.16.200.34')          # master(执行server.py的nic_ip)
 parser.add_argument('--write_to_file', default=False)
+parser.add_argument('--agg_sw_idx', type=int, default=0)
+parser.add_argument('--degree', type=int, default=5)
 args = parser.parse_args()
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -46,7 +48,7 @@ device = torch.device("cuda" if args.use_cuda and torch.cuda.is_available() else
 def main():
     offset = random.randint(0, 20) * 20
     print(offset)
-    config_file = "worker_config_2.json"
+    config_file = "worker_config.json"
     common_config = CommonConfig('CIFAR10',
                                  args.model,
                                  args.epoch,
@@ -98,7 +100,9 @@ def main():
                                        custom=custom),
                    common_config=common_config,
                    user_name=worker_config['name'],
-                   para_nums=para_nums
+                   para_nums=para_nums,
+                   agg_sw_idx=args.agg_sw_idx,
+                   degree=args.degree
                    )
         )
 

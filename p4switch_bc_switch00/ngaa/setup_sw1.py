@@ -6,18 +6,19 @@ p4 = bfrt.ngaa.pipe
 # network card name “ens3f0”
 ip01="172.16.200.1"
 ip02="172.16.200.2"
-ip03="172.16.200.3"
 ip08="172.16.200.8"
 ip11="172.16.200.31"
 ip12="172.16.200.32"
-ip13="172.16.200.33"
+ip14="172.16.200.34"
+ip15="172.16.200.35"
 
 mac01=0x08c0eb204fda
 mac02=0x08c0eb289c60
 mac08=0x08c0eb289ca8
 mac11=0x08c0eb289d60
 mac12=0x08c0eb289c58
-mac13=0x9440c9b4d8a8
+mac14=0x88e9a40d7f54
+mac15=0x9440c9b4d8d0
 
 # can be found in “bf-sde.pm> show”, list "D_P"
 port01=132
@@ -107,22 +108,25 @@ ipRoute = p4.Ingress.ipRoute
 
 # what does "add_with_ipv4_forward" do?
 # extract the packet and match ip with ip01/ip02/..., if successfully matched, send packet to port0x
-switch_check.add_with_set_agg(switch_id=b'00000000')
+switch_check.add_with_set_agg(switch_id=b'00000001')
 print("done set agg")
-ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip01),dst_addr_m=mac01,port=port01)  # dstip, dstmac(no use), port
-print("done 01")
-ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip02),dst_addr_m=mac02,port=port02)
-print("done 02")
-ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip08),dst_addr_m=mac08,port=port01)  # dstip, dstmac(no use), port
-print("done 08")
-ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip11),dst_addr_m=mac11,port=port02)
-print("done 11")
-ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip12),dst_addr_m=mac12,port=port01)  # dstip, dstmac(no use), port
-print("done 12")
-ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip13),dst_addr_m=mac13,port=port02)
-print("done 13")
-# ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip03),port=port03)
-# print("done 03")
+ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip14),dst_addr_m=mac14,port=port01)  # port not sure, is switch00 port
+print("done ip14")
+ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip15),dst_addr_m=mac15,port=port01)  # port not sure, is server15 port
+print("done ip15")
+# ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip01),dst_addr_m=mac01,port=port01)  # dstip, dstmac(no use), port
+# print("done 01")
+# ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip02),dst_addr_m=mac02,port=port02)
+# print("done 02")
+# ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip08),dst_addr_m=mac08,port=port01)  # dstip, dstmac(no use), port
+# print("done 08")
+# ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip11),dst_addr_m=mac11,port=port02)
+# print("done 11")
+# ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip12),dst_addr_m=mac12,port=port01)  # dstip, dstmac(no use), port
+# print("done 12")
+# ipRoute.add_with_ipv4_forward(dst_addr=ip_address(ip14),dst_addr_m=mac14,port=port02)
+# print("done 13")
+
 # =============================================================
 
 # register_table_size = p4.Ingress.table_size_reg

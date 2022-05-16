@@ -12,18 +12,18 @@ script_path_of_host = {
     "server08": '/service/python3/bin/python3',
     "server11": '/service/python3/bin/python3',
     "server12": '/service/python3/bin/python3',
-    "server13": '/service/python3/bin/python3',
+    "server14": '/service/python3/bin/python3',
     "server15": '/service/python3/bin/python3'
 }
 
 work_dir_of_host = {
-    "server01": '/home/sdn/bc/mapreduce_testbed',
-    "server02": '/home/sdn/bc/mapreduce_testbed',
-    "server08": '/home/sdn/bc/mapreduce_testbed',
-    "server11": '/home/sdn/bc/mapreduce_testbed',
-    "server12": '/home/sdn/bc/mapreduce_testbed',
-    "server13": '/home/sdn/bc/mapreduce_testbed',
-    "server15": '/home/sdn/bc/mapreduce_testbed'
+    "server01": '/home/sdn/bc/juke_testbed',
+    "server02": '/home/sdn/bc/juke_testbed',
+    "server08": '/home/sdn/bc/juke_testbed',
+    "server11": '/home/sdn/bc/juke_testbed',
+    "server12": '/home/sdn/bc/juke_testbed',
+    "server14": '/home/sdn/bc/juke_testbed',
+    "server15": '/home/sdn/bc/juke_testbed'
 }
 
 
@@ -33,7 +33,9 @@ class Worker:
                  config,            # 来自server.py args + json参数
                  common_config,     # 来自server.py args参数
                  user_name,         # 来自server.py args参数，host X
-                 para_nums          # 模型参数
+                 para_nums,         # 模型参数
+                 agg_sw_idx,
+                 degree
                  ):
         self.config = config
         self.common_config = common_config
@@ -43,6 +45,8 @@ class Worker:
         self.socket = None
         self.train_info = None
         self.para_nums = para_nums
+        self.agg_sw_idx = agg_sw_idx
+        self.degree = degree
 
         cmd = ' cd ' + work_dir_of_host[self.config.client_host] + '; sudo ' + script_path_of_host[
             self.config.client_host] + ' -u client.py ' + \
@@ -62,6 +66,8 @@ class Worker:
               ' --algorithm ' + self.common_config.algorithm + \
               ' --step_size ' + str(self.common_config.step_size) + \
               ' --write_to_file ' + str(self.common_config.write_to_file) + \
+              ' --agg_sw_idx ' + str(self.agg_sw_idx) + \
+              ' --degree ' + str(self.degree) + \
               ' > data/log/client_' + str(self.idx) + '_log.txt 2>&1'
 
         if self.config.client_ip == '127.0.0.1':
