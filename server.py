@@ -46,7 +46,7 @@ device = torch.device("cuda" if args.use_cuda and torch.cuda.is_available() else
 def main():
     offset = random.randint(0, 20) * 20
     print(offset)
-    config_file = "worker_config_1.json"
+    config_file = "worker_config_2.json"
     common_config = CommonConfig('CIFAR10',
                                  args.model,
                                  args.epoch,
