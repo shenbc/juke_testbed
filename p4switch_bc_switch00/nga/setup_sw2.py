@@ -1,4 +1,4 @@
-# bf-sde 9.3.1, switch01 use(id=0x00)
+# bf-sde 9.3.1, switch02 use(id=0x01)
 from ipaddress import ip_address
 
 p4 = bfrt.nga.pipe
@@ -112,11 +112,11 @@ ipv4_lpm = p4.Ingress.ipv4_lpm
 
 # what does "add_with_ipv4_forward" do?
 # extract the packet and match ip with ip01/ip02/..., if successfully matched, send packet to port0x
-switch_check.add_with_set_agg(b'00000000')
+switch_check.add_with_set_agg(b'00000001')
 print("done set agg")
-ipv4_lpm.add_with_ipv4_forward(dstAddr=ip_address(ip08),dstMacAddr=mac08,port=port03)
+ipv4_lpm.add_with_ipv4_forward(dstAddr=ip_address(ip08),dstMacAddr=mac08,port=port29)
 print("done ip08")
-ipv4_lpm.add_with_ipv4_forward(dstAddr=ip_address(ip11),dstMacAddr=mac11,port=port29)
+ipv4_lpm.add_with_ipv4_forward(dstAddr=ip_address(ip11),dstMacAddr=mac11,port=port05)
 print("done ip11")
 
 
