@@ -1,3 +1,4 @@
+# bf-sde 9.3.1, switch01 use(id=0x00)
 from ipaddress import ip_address
 
 p4 = bfrt.nga.pipe
