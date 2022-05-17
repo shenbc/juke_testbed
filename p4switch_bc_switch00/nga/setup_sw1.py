@@ -22,12 +22,12 @@ mac14=0x88e9a40d7f54
 mac15=0x9440c9b4d8d0
 
 # can be found in “bf-sde.pm> show”, list "D_P"
-port01=132
-port02=140
-port03=148
-port04=156
-port05=164
-port29=144
+port01=128
+port02=136
+port03=144
+port04=152
+port05=160
+port29=156
 
 def ip2int(ip):
     ip_list = ip.strip().split('.')
