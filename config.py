@@ -35,7 +35,8 @@ class Worker:
                  user_name,         # 来自server.py args参数，host X
                  para_nums,         # 模型参数
                  agg_sw_idx,
-                 degree
+                 degree,
+                 log_note
                  ):
         self.config = config
         self.common_config = common_config
@@ -47,6 +48,7 @@ class Worker:
         self.para_nums = para_nums
         self.agg_sw_idx = agg_sw_idx
         self.degree = degree
+        self.log_note = log_note
 
         cmd = ' cd ' + work_dir_of_host[self.config.client_host] + '; sudo ' + script_path_of_host[
             self.config.client_host] + ' -u client.py ' + \
@@ -68,6 +70,7 @@ class Worker:
               ' --write_to_file ' + str(self.common_config.write_to_file) + \
               ' --agg_sw_idx ' + str(self.agg_sw_idx) + \
               ' --degree ' + str(self.degree) + \
+              ' --log_note ' + str(self.log_note) + \
               ' > data/log/client_' + str(self.idx) + '_log.txt 2>&1'
 
         if self.config.client_ip == '127.0.0.1':
@@ -112,6 +115,7 @@ class Worker:
                   ' --write_to_file ' + str(self.common_config.write_to_file) + \
                   ' --agg_sw_idx ' + str(self.agg_sw_idx) + \
                   ' --degree ' + str(self.degree) + \
+                  ' --log_note ' + str(self.log_note) + \
                   ' > data/log/client_' + str(self.idx) + '_log.txt 2>&1'
             print("Execute cmd.")
             print(cmd)

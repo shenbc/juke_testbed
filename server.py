@@ -39,6 +39,7 @@ parser.add_argument('--nic_ip', type=str, default='172.16.200.8')          # mas
 parser.add_argument('--write_to_file', default=False)
 parser.add_argument('--agg_sw_idx', type=int, default=0)
 parser.add_argument('--degree', type=int, default=5)
+parser.add_argument('--log_note', type=str, default='')
 args = parser.parse_args()
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -66,7 +67,7 @@ def main():
     with open(config_file) as json_file:
         workers_config = json.load(json_file)
     
-    file_name = 'reducer_'+str(args.model)+'_'+str(args.ip)
+    file_name = 'reducer_'+str(args.ip)+'_'+str(args.model)+'_'+str(args.log_note)
     flog = open('log/' + file_name + '.txt', 'w')
     
 
@@ -102,7 +103,8 @@ def main():
                    user_name=worker_config['name'],
                    para_nums=para_nums,
                    agg_sw_idx=args.agg_sw_idx,
-                   degree=args.degree
+                   degree=args.degree,
+                   log_note=args.log_note
                    )
         )
 
@@ -146,7 +148,7 @@ def main():
         communication_parallel(worker_list, action="get_model")
         end_time1=time.time()-start_time1
         print("get data time (not nic) : {}".format(str(end_time1)))
-        flog.write('get data time (not nic) : ' + str(end_time1) + '\n')
+        flog.write('get_data_time(not nic) : ' + str(end_time1) + '\n')
         print("get data end")
 
         # 聚合数据到本模型参数中
@@ -163,8 +165,8 @@ def main():
         communication_parallel(worker_list, action="send_model", data=global_para)
         # communication_parallel(worker_list, action="send_model", data=tmp_para)
         end_time2=time.time()-start_time2
-        print("transfer time: {}".format(str(end_time2)))
-        flog.write('send data time: ' + str(end_time2) + '\n')
+        print("send data time: {}".format(str(end_time2)))
+        flog.write('send_data_time: ' + str(end_time2) + '\n')
         print("send end")
 
         # 测试模型准确率
@@ -177,8 +179,8 @@ def main():
         common_config.recoder.add_scalar('Test_loss/average_time', test_loss, total_time)
         end_time3=time.time()-start_time1
         print("this epoch time: {}".format(str(end_time3)))
-        flog.write('this epoch time: ' + str(end_time3) + '\n\n')
-        flog.write('accurency: '+ str(acc) +'loss'+ str(test_loss) + '\n\n\n')
+        flog.write('this_epoch_time: ' + str(end_time3) + '\n')
+        flog.write('accurency: '+ str(acc) +'\nloss'+ str(test_loss) + '\n\n')
 
     flog.close()
 

@@ -48,6 +48,7 @@ parser.add_argument('--algorithm', type=str, default='proposed')
 parser.add_argument('--write_to_file', default=False)
 parser.add_argument('--agg_sw_idx', type=int, default=0)
 parser.add_argument('--degree', type=int, default=5)
+parser.add_argument('--log_note', type=str, default='')
 
 args = parser.parse_args()
 
@@ -104,10 +105,11 @@ def main():
                                interface='ens3f0',
                                thread_num=8)
 
-    file_name = 'mapper_'+str(args.model)+'_'+str(args.client_ip)
+    file_name = 'mapper_'+str(args.client_ip)+'_'+str(args.model)+'_'+str(args.log_note)
     flog = open('log/' + file_name + '.txt', 'w')
 
     for epoch in range(1, 1 + args.epoch):
+        # 训练及测试
         epoch_lr = max((args.decay_rate * epoch_lr, args.min_lr))
         print("model-{}-epoch-{} lr: {}, ratio: {} ".
               format(args.model, epoch, epoch_lr, args.ratio))
@@ -117,8 +119,8 @@ def main():
                            model_type=args.model)
         local_para = torch.nn.utils.parameters_to_vector(local_model.parameters()).clone().detach()
         train_time = time.time() - start_time
-        flog.write('epoch: ' + str(args.epoch) + '\n')
-        flog.write('train time: ' + str(train_time) + '\n')
+        flog.write('EPOCH: ' + str(args.epoch) + '\n')
+        flog.write('train_time: ' + str(train_time) + '\n')
         # print("train time: ", train_time)
 
         # if args.write_to_file == True and epoch == 1:
@@ -128,11 +130,11 @@ def main():
         start_time2 = time.time()
         test_loss, acc = test(local_model, test_loader, device, model_type=args.model)
         test_time = time.time() - start_time2
-        flog.write('test time: ' + str(test_time) + '\n')
+        flog.write('test_time: ' + str(test_time) + '\n')
         print("after aggregation, epoch: {}, train loss: {}, test loss: {}, test accuracy: {}".format(epoch, train_loss,
                                                                                                       test_loss, acc))
         
-        
+        # 发数据
         print("send para")
         # start_time = time.time()
         # print(len(local_para))
@@ -140,24 +142,30 @@ def main():
         data_manager.update_data(local_para.detach().tolist())
         data_manager.fast_send_data(int(args.idx), args.agg_sw_idx, args.degree, 100000) # worker id, switch id, degree, no use
         fast_send_time = time.time() - start_time3
-        flog.write('fast_send_time: ' + str(fast_send_time) + '\n')
+        flog.write('fast_send_time (include data process): ' + str(fast_send_time) + '\n')
 
+        start_time4 = time.time()
         send_data_socket(local_para.cpu(), master_socket)
-        slow_send_time = time.time() - start_time3
+        slow_send_time = time.time() - start_time4
         flog.write('slow_send_time: ' + str(slow_send_time) + '\n')
-        epoch_time = time.time()-start_time
-        flog.write('epoch_time: ' + str(epoch_time) + '\n\n')
 
+        # 接收数据
         print("get begin")
-
+        start_time5=time.time()
         if torch.cuda.is_available():
             local_para = get_data_socket(master_socket).cuda()
         else:
             local_para = get_data_socket(master_socket)
-
+        send_data_time = time.time() - start_time5
+        flog.write('send_data_time: ' + str(send_data_time) + '\n')
         print("get end")
         local_para.to(device)
         torch.nn.utils.vector_to_parameters(local_para, local_model.parameters())
+
+        epoch_time = time.time()-start_time
+        flog.write('epoch_time: ' + str(epoch_time) + '\n\n')
+
+
 
     flog.close()
     master_socket.shutdown(2)
