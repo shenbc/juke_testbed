@@ -49,6 +49,7 @@ class LSTMnet(nn.Module):
         self.linear = nn.Linear(hidden_dim, n_class)
 
     def forward(self, x):  # x‘s shape (batch_size, 序列长度, 序列中每个数据的长度)
+        x=x.view(-1,32,32*3)
         out, _ = self.lstm(x)  # out‘s shape (batch_size, 序列长度, hidden_dim)
         out = out[:, -1, :]  # 中间的序列长度取-1，表示取序列中的最后一个数据，这个数据长度为hidden_dim，
         # 得到的out的shape为(batch_size, hidden_dim)
@@ -76,7 +77,7 @@ def get_model(model_name, download=False):
     elif model_name == 'resnet50':
         model = m.resnet50(num_classes=10)
     elif model_name == 'lstm':
-        model = LSTMnet(32,56,2,10)
+        model = LSTMnet(32*3,56,2,10)
 
 
     if model is not None:
