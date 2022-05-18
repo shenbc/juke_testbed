@@ -118,9 +118,9 @@ def main():
                            model_type=args.model)
         local_para = torch.nn.utils.parameters_to_vector(local_model.parameters()).clone().detach()
         train_time = time.time() - start_time
-        flog.write('EPOCH: ' + str(args.epoch) + '\n')
+        flog.write('EPOCH: ' + str(epoch) + '\n')
         flog.write('train_time: ' + str(train_time) + '\n')
-        print('EPOCH: ' + str(args.epoch))
+        print('EPOCH: ' + str(epoch))
         print('train_time: ' + str(train_time))
         # print("train time: ", train_time)
 
