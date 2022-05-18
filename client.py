@@ -131,10 +131,11 @@ def main():
         flog.write('test time: ' + str(test_time) + '\n')
         print("after aggregation, epoch: {}, train loss: {}, test loss: {}, test accuracy: {}".format(epoch, train_loss,
                                                                                                       test_loss, acc))
+        
+        
         print("send para")
         # start_time = time.time()
         # print(len(local_para))
-        
         start_time3 = time.time()
         data_manager.update_data(local_para.detach().tolist())
         data_manager.fast_send_data(int(args.idx), args.agg_sw_idx, args.degree, 100000) # worker id, switch id, degree, no use

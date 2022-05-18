@@ -137,15 +137,19 @@ def main():
     total_time = 0.0
 
     for epoch_idx in range(1, 1 + common_config.epoch):
-        print("get begin")
+        print('============' + 'EPOCH: ' + str(epoch_idx) + '============')
+        flog.write('EPOCH: ' + str(epoch_idx) + '\n')
+
+        # 收数据
+        print("get data begin")
         start_time1 = time.time()
         communication_parallel(worker_list, action="get_model")
         end_time1=time.time()-start_time1
-        print("transfer time: {}".format(str(end_time1)))
-        flog.write('EPOCH: ' + str(epoch_idx) + '\n')
-        flog.write('get data time: ' + str(end_time1) + '\n')
-        print("get end")
+        print("get data time (not nic) : {}".format(str(end_time1)))
+        flog.write('get data time (not nic) : ' + str(end_time1) + '\n')
+        print("get data end")
 
+        # 聚合数据到本模型参数中
         global_para = torch.nn.utils.parameters_to_vector(global_model.parameters()).clone().detach()
         # 200 网段（非聚合）收取数据，不对本地参数操作
         aggregate_model_from_nic(global_para, updated_para, args.step_size, worker_num)
@@ -153,6 +157,7 @@ def main():
         # 50 网段收数据，并更新到本地参数
         global_para = aggregate_model(global_para, worker_list, args.step_size)
 
+        # 发送聚合好的数据
         print("send begin")
         start_time2 = time.time()
         communication_parallel(worker_list, action="send_model", data=global_para)
@@ -162,6 +167,7 @@ def main():
         flog.write('send data time: ' + str(end_time2) + '\n')
         print("send end")
 
+        # 测试模型准确率
         torch.nn.utils.vector_to_parameters(global_para, global_model.parameters())
         test_loss, acc = test(global_model, test_loader, device, model_type=args.model)
         common_config.recoder.add_scalar('Accuracy/average', acc, epoch_idx)
@@ -175,6 +181,8 @@ def main():
         flog.write('accurency: '+ str(acc) +'loss'+ str(test_loss) + '\n\n\n')
 
     flog.close()
+
+
     for worker in worker_list:
         worker.socket.shutdown(2)
 
