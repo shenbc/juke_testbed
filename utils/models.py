@@ -76,7 +76,7 @@ def get_model(model_name, download=False):
     elif model_name == 'resnet50':
         model = m.resnet50(num_classes=10)
     elif model_name == 'lstm':
-        model = LSTMnet()
+        model = LSTMnet(32,56,2,10)
 
 
     if model is not None:

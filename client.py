@@ -108,11 +108,10 @@ def main():
     file_name = 'mapper_'+str(args.client_ip)+'_'+str(args.model)+'_'+str(args.log_note)
     flog = open('log/' + file_name + '.txt', 'w')
 
+    print("\n")
     for epoch in range(1, 1 + args.epoch):
         # 训练及测试
         epoch_lr = max((args.decay_rate * epoch_lr, args.min_lr))
-        print("model-{}-epoch-{} lr: {}, ratio: {} ".
-              format(args.model, epoch, epoch_lr, args.ratio))
         start_time = time.time()
         optimizer = optim.SGD(local_model.parameters(), lr=epoch_lr, weight_decay=args.weight_decay)
         train_loss = train(local_model, train_loader, optimizer, local_iters=local_steps, device=device,
@@ -121,6 +120,8 @@ def main():
         train_time = time.time() - start_time
         flog.write('EPOCH: ' + str(args.epoch) + '\n')
         flog.write('train_time: ' + str(train_time) + '\n')
+        print('EPOCH: ' + str(args.epoch))
+        print('train_time: ' + str(train_time))
         # print("train time: ", train_time)
 
         # if args.write_to_file == True and epoch == 1:
@@ -131,8 +132,9 @@ def main():
         test_loss, acc = test(local_model, test_loader, device, model_type=args.model)
         test_time = time.time() - start_time2
         flog.write('test_time: ' + str(test_time) + '\n')
-        print("after aggregation, epoch: {}, train loss: {}, test loss: {}, test accuracy: {}".format(epoch, train_loss,
-                                                                                                      test_loss, acc))
+        print('test_time: ' + str(test_time))
+        # print("after aggregation, epoch: {}, train loss: {}, test loss: {}, test accuracy: {}".format(epoch, train_loss,
+        #                                                                                               test_loss, acc))
         
         # 发数据
         print("send para")
@@ -143,11 +145,13 @@ def main():
         data_manager.fast_send_data(int(args.idx), args.agg_sw_idx, args.degree, 100000) # worker id, switch id, degree, no use
         fast_send_time = time.time() - start_time3
         flog.write('fast_send_time (include data process): ' + str(fast_send_time) + '\n')
+        print('fast_send_time (include data process): ' + str(fast_send_time))
 
         start_time4 = time.time()
         send_data_socket(local_para.cpu(), master_socket)
         slow_send_time = time.time() - start_time4
         flog.write('slow_send_time: ' + str(slow_send_time) + '\n')
+        print('slow_send_time: ' + str(slow_send_time))
 
         # 接收数据
         print("get begin")
@@ -158,12 +162,14 @@ def main():
             local_para = get_data_socket(master_socket)
         send_data_time = time.time() - start_time5
         flog.write('send_data_time: ' + str(send_data_time) + '\n')
+        print('send_data_time: ' + str(send_data_time))
         print("get end")
         local_para.to(device)
         torch.nn.utils.vector_to_parameters(local_para, local_model.parameters())
 
         epoch_time = time.time()-start_time
         flog.write('epoch_time: ' + str(epoch_time) + '\n\n')
+        print('epoch_time: ' + str(epoch_time))
 
 
 
