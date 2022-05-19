@@ -180,7 +180,7 @@ def main():
         end_time3=time.time()-start_time1
         print("this epoch time: {}".format(str(end_time3)))
         flog.write('this_epoch_time: ' + str(end_time3) + '\n')
-        flog.write('accurency: '+ str(acc) +'\nloss'+ str(test_loss) + '\n\n')
+        flog.write('accurency: '+ str(acc) +'\nloss:'+ str(test_loss) + '\n\n')
 
     flog.close()
 
