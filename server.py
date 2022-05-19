@@ -39,6 +39,7 @@ parser.add_argument('--nic_ip', type=str, default='172.16.200.8')          # mas
 parser.add_argument('--write_to_file', default=False)
 parser.add_argument('--agg_sw_idx', type=int, default=0)
 parser.add_argument('--degree', type=int, default=5)
+parser.add_argument('--client_group', type=int, default=0)
 parser.add_argument('--log_note', type=str, default='')
 args = parser.parse_args()
 
@@ -49,7 +50,13 @@ device = torch.device("cuda" if args.use_cuda and torch.cuda.is_available() else
 def main():
     offset = random.randint(0, 20) * 20
     print(offset)
-    config_file = "worker_config.json"
+    if args.client_group == 0:
+        config_file = "worker_config_0.json"
+    elif args.client_group == 1:
+        config_file = "worker_config_1.json"
+    elif args.client_group == 2:
+        config_file = "worker_config_2.json"
+
     common_config = CommonConfig('CIFAR10',
                                  args.model,
                                  args.epoch,
@@ -79,6 +86,7 @@ def main():
     print("Model name: {}".format(common_config.model))
     print("Model Size: {} MB".format(model_size))
 
+    
     worker_num = min(args.worker_num, len(workers_config["worker_config_list"]))
 
     worker_list = []

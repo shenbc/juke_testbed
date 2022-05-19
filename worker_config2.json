@@ -1,0 +1,37 @@
+{
+  "worker_config_list": [
+    {
+      "name": "host2",
+      "host": "server12",
+      "ip": "172.16.50.32",
+      "nic_ip": "172.16.200.32",
+      "ssh_port": "22",
+      "user": "sdn",
+      "pwd": "sdn123456",
+      "computation": 3,
+      "dynamics": 2
+    },
+    {
+      "name": "host3",
+      "host": "server14",
+      "ip": "172.16.50.34",
+      "nic_ip": "172.16.200.34",
+      "ssh_port": "22",
+      "user": "sdn",
+      "pwd": "sdn123456",
+      "computation": 3,
+      "dynamics": 2
+    },
+    {
+      "name": "host4",
+      "host": "server15",
+      "ip": "172.16.50.35",
+      "nic_ip": "172.16.200.35",
+      "ssh_port": "22",
+      "user": "sdn",
+      "pwd": "sdn123456",
+      "computation": 3,
+      "dynamics": 2
+    }
+  ]
+}
