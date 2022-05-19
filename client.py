@@ -161,8 +161,8 @@ def main():
         else:
             local_para = get_data_socket(master_socket)
         send_data_time = time.time() - start_time5
-        flog.write('send_data_time: ' + str(send_data_time) + '\n')
-        print('send_data_time: ' + str(send_data_time))
+        flog.write('recv_data_time: ' + str(send_data_time) + '\n')
+        print('recv_data_time: ' + str(send_data_time))
         print("get end")
         local_para.to(device)
         torch.nn.utils.vector_to_parameters(local_para, local_model.parameters())
