@@ -162,10 +162,16 @@ def main():
         # 聚合数据到本模型参数中
         global_para = torch.nn.utils.parameters_to_vector(global_model.parameters()).clone().detach()
         # 200 网段（非聚合）收取数据，不对本地参数操作
+        start_time_agg1 = time.time()
         aggregate_model_from_nic(global_para, updated_para, args.step_size, worker_num)
         updated_para.clear()
+        agg1_time = time.time() - start_time_agg1
+        flog.write('nic_agg_time: ' + str(agg1_time) + '\n')
         # 50 网段收数据，并更新到本地参数
+        start_time_agg2 = time.time()
         global_para = aggregate_model(global_para, worker_list, args.step_size)
+        agg2_time = time.time() - start_time_agg2
+        flog.write('agg_time: ' + str(agg2_time) + '\n')
 
         # 发送聚合好的数据
         print("send begin")
@@ -178,8 +184,10 @@ def main():
         print("send end")
 
         # 测试模型准确率
+        start_time_t = time.time()
         torch.nn.utils.vector_to_parameters(global_para, global_model.parameters())
         test_loss, acc = test(global_model, test_loader, device, model_type=args.model)
+        end_time_t = time.time() - start_time_t
         common_config.recoder.add_scalar('Accuracy/average', acc, epoch_idx)
         common_config.recoder.add_scalar('Test_loss/average', test_loss, epoch_idx)
         print("Epoch: {}, accuracy: {}, test_loss: {}\n".format(epoch_idx, acc, test_loss))
@@ -187,6 +195,7 @@ def main():
         common_config.recoder.add_scalar('Test_loss/average_time', test_loss, total_time)
         end_time3=time.time()-start_time1
         print("this epoch time: {}".format(str(end_time3)))
+        flog.write('test_time: ' + str(end_time_t) + '\n')
         flog.write('this_epoch_time: ' + str(end_time3) + '\n')
         flog.write('accurency: '+ str(acc) +'\nloss:'+ str(test_loss) + '\n\n')
 
